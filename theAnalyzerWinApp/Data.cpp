@@ -31,7 +31,7 @@ std::string errorPositionInLine = "Ошибок не обнаружено";
 std::string memory = "";
 std::string StrProg; //буфер - копия теста
 
-enum tOperCode{ opAdd , opSub, opMult, opDiv, opAss , opOr, opAnd };
+enum tOperCode{ opAdd , opSub, opMult, opDiv, opAss , opOr, opAnd , opRel };
 enum TypeCod { typeVoid, typeInt, typeFloat, typeBool };
 enum tCatId { catNoCat, catProgName, catVarName, catTypeName }; // категории
 
@@ -480,6 +480,10 @@ tToken Scaner() {
 	{
 		Result.dop.opCode = opOr;
 	}
+	else if (tokenDopName == "<" || tokenDopName == ">" || tokenDopName == "<=" || tokenDopName == ">=")
+	{
+		Result.dop.opCode = opRel;
+	}
 
 	if (tokenDopName == "true" || tokenDopName == "false")
 	{
@@ -695,6 +699,12 @@ bool A9(tToken token) {
 	PntElTblIde t5 = AttrSt.top(); // тип первого выражения
 	AttrSt.pop();
 
+	if (t3.opCode == opRel)
+	{
+		t5.tip.TypeCode = typeBool;
+		t2.tip.TypeCode = typeBool;
+	}
+
 	if (t5.tip.TypeCode != t2.tip.TypeCode) {
 		Type_Error(4, "Type mismatch");
 		return false;
@@ -882,6 +892,12 @@ bool Semantic_Action(int ActionCode, tToken& Token) { // true - успешно, 
 		break;
 	case 20:
 		if (!A20(Token)) result = false;
+		break;
+	case 21:
+		if (!A9(Token)) result = false;
+		break;
+	case 22:
+		A8(Token);
 		break;
 
 	default:
