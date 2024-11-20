@@ -62,9 +62,9 @@ namespace theAnalyzerWinApp {
 		private: System::Windows::Forms::RichTextBox^ outputTokens;
 		private: System::Windows::Forms::Button^ btnLoadXmlClick;
 		private: System::Windows::Forms::Button^ btnSutClick;
-	private: System::Windows::Forms::RichTextBox^ memDataText;
-	private: System::Windows::Forms::Label^ label3;
-	private: System::Windows::Forms::OpenFileDialog^ openFileDialog2;
+		private: System::Windows::Forms::RichTextBox^ memDataText;
+		private: System::Windows::Forms::Label^ label3;
+		private: System::Windows::Forms::OpenFileDialog^ openFileDialog2;
 
 
 
@@ -344,6 +344,15 @@ namespace theAnalyzerWinApp {
 			memDataText->Text = "";
 
 			StrProg = msclr::interop::marshal_as<std::string >(inputCode->Text);
+
+			int occurrences = std::count(StrProg.begin(), StrProg.end(), '#');
+			if (occurrences % 2 != 0) {
+				errorPos->Text = "Error";
+				sostError->Text = "Не закрытый комментарий!";
+				outputTokens->Text = "";
+				return;
+			}
+
 			if (SUT_LR())
 			{
 				memDataText->Text = gcnew String(memory.c_str());
